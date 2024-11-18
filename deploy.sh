@@ -1,3 +1,15 @@
+# Laravel Deployment Script for ISPConfig-Managed VPS
+# Author: Yiannis Bourkelis
+# Repository: https://github.com/YiannisBourkelis/laravel-deploy-ispconfig/
+# License: MIT License (https://github.com/YiannisBourkelis/laravel-deploy-ispconfig/blob/main/LICENSE)
+#
+# Disclaimer:
+# This script is provided "as is", without warranty of any kind, express or implied, including but not limited to
+# the warranties of merchantability, fitness for a particular purpose, and noninfringement. In no event shall the
+# authors or copyright holders be liable for any claim, damages, or other liability, whether in an action of
+# contract, tort, or otherwise, arising from, out of, or in connection with the script or the use or other
+# dealings in the script. Use this script at your own risk.
+
 # Define variables
 APP_DIR="/var/www/your-domain.com/web/your-laravel-project-folder"
 BRANCH="main"
