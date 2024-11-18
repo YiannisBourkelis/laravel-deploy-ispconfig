@@ -20,13 +20,27 @@ GITHUB_TOKEN="github_pat_your_github_token"
 REPO_OWNER="YiannisBourkelis"
 REPO_NAME="your-laravel-repo-name"
 
+# Check if the script is running as the correct user
 if [ "$(whoami)" != "$USER" ]; then
-  echo "Error: This script must be run as user '$USER'."
-  exit 1
+  echo
+  echo "============================================================"
+  echo " This script should be run as user '$USER'."
+  echo "============================================================"
+  echo
+  read -p "Do you want to switch to '$USER' and re-run the script? [y/N]: " RESPONSE
+  RESPONSE=${RESPONSE,,} # Convert to lowercase
+  if [[ "$RESPONSE" == "y" || "$RESPONSE" == "yes" ]]; then
+    echo "Switching to user '$USER'..."
+    sudo -u $USER -H bash -c "$0" # Re-run the script as $USER
+    exit $? # Exit with the status of the re-executed script
+  else
+    echo "Exiting. Please re-run the script as user '$USER'."
+    exit 1
+  fi
 fi
 
 # Proceed with the rest of the script
-echo "Running script as user 'web14'..."
+echo "Running script as user '$USER'..."
 
 echo "Change to the project directory"
 cd $APP_DIR
