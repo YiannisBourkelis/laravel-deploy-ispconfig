@@ -15,9 +15,9 @@ APP_DIR="/var/www/your-domain.com/web/your-laravel-project-folder"
 BRANCH="main"
 PHP_VERSION="8.3"
 USER="web55"
-GITHUB_USERNAME="YiannisBourkelis"
+GITHUB_USERNAME="YourUserName"
 GITHUB_TOKEN="github_pat_your_github_token"
-REPO_OWNER="YiannisBourkelis"
+REPO_OWNER="YourUserName"
 REPO_NAME="your-laravel-repo-name"
 
 # Check if the script is running as the correct user
