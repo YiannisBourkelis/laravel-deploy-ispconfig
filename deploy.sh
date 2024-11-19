@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Laravel Deployment Script for ISPConfig-Managed VPS
 # Author: Yiannis Bourkelis
 # Repository: https://github.com/YiannisBourkelis/laravel-deploy-ispconfig/
@@ -39,43 +41,51 @@ if [ "$(whoami)" != "$USER" ]; then
   fi
 fi
 
-# Proceed with the rest of the script
 echo "Running script as user '$USER'..."
 
-echo "Change to the project directory"
-cd $APP_DIR
+# Change to the project directory
+echo "Changing to the project directory: $APP_DIR"
+cd $APP_DIR || { echo "Error: Failed to change directory to $APP_DIR"; exit 1; }
 
-echo "Turn on maintenance mode"
-/usr/bin/php$PHP_VERSION artisan down --render="maintenance" --retry=30 || true
-#/usr/bin/php$PHP_VERSION artisan down --retry=30 || true
+# Enable maintenance mode
+echo "Turning on maintenance mode"
+/usr/bin/php$PHP_VERSION artisan down --retry=30 || true
+#/usr/bin/php$PHP_VERSION artisan down --render="maintenance" --retry=30 || true
 
-echo "Pull the latest changes from the git repository $BRANCH..."
-# git reset --hard
-# git clean -df
-# sudo -u $USER git pull origin $BRANCH
+# Pull the latest changes from the repository
+echo "Pulling the latest changes from the git repository ($BRANCH)..."
 git pull --no-rebase https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/$REPO_OWNER/$REPO_NAME.git $BRANCH
 
-echo "Install/update composer dependecies"
+# Install or update composer dependencies
+echo "Installing/updating composer dependencies"
 /usr/bin/php$PHP_VERSION /usr/local/bin/composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
-echo "Run database migrations"
+# Run database migrations
+echo "Running database migrations"
 /usr/bin/php$PHP_VERSION artisan migrate --force
-# /usr/bin/php$PHP_VERSION artisan migrate
 
-echo "Clear caches"
+# Clear caches
+echo "Clearing caches"
 /usr/bin/php$PHP_VERSION artisan optimize:clear
 
 # Clear expired password reset tokens
+echo "Clearing expired password reset tokens"
 /usr/bin/php$PHP_VERSION artisan auth:clear-resets
 
 # Install node modules
+echo "Installing node modules"
 npm ci
 
 # Build assets using Laravel Mix
+echo "Building assets using Laravel Mix"
 npm run build
 
-echo "cache optimize"
+# Optimize application cache
+echo "Optimizing application cache"
 /usr/bin/php$PHP_VERSION artisan optimize
 
-# Turn off maintenance mode
+# Disable maintenance mode
+echo "Turning off maintenance mode"
 /usr/bin/php$PHP_VERSION artisan up
+
+echo "Deployment script completed successfully!"
