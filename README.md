@@ -1,3 +1,4 @@
+
 # Laravel Deployment Script for ISPConfig Managed VPS
 Deploying a Laravel project to a live server often requires a series of repetitive steps to ensure the project works as expected. This script simplifies the deployment process and can either serve as a complete solution for most Laravel projects or act as a foundation for customization based on a project's specific needs.
 
@@ -27,19 +28,13 @@ mkdir /var/www/clients/client45/web55/.npm
 sudo chown -R web55:client45 "/var/www/clients/client45/web55/.npm"
 chattr +i /var/www/clients/client45/web55/
 ```
-
-### 3. Set Correct File Permissions
-Ensure all files within the web folder are owned by the correct user and group:
-```bash
-sudo chown -R web55:client45 "/var/www/clients/client45/web55/web"
-```
-### 4. Download the Deployment Script
+### 3. Download the Deployment Script
 Navigate to the private folder within your user's directory and download the deployment script:
 ```bash
 cd /var/www/clients/client45/web55/private
 wget https://raw.githubusercontent.com/YiannisBourkelis/laravel-deploy-ispconfig/refs/heads/main/deploy.sh
 ```
-### 5. Edit the Script
+### 4. Edit the Script
 Open the `deploy.sh` script with your favorite text editor:
 ```bash
 vim deploy.sh
@@ -55,19 +50,46 @@ GITHUB_TOKEN="github_pat_your_github_token"
 REPO_OWNER="YourUserName"
 REPO_NAME="your-laravel-repo-name"
 ```
-### 6. Set Execute Permissions
+### 5. Set Execute Permissions
 Grant execute permissions to the script:
 ```bash
 chmod +x deploy.sh
 ```
-### 7. Deploy Your Project
+### 6. Deploy Your Project
 Run the script to deploy your project:
 ```bash
 ./deploy.sh
 ```
+If the web directory is empty, the script will:
+
+1.  Clone your project repository.
+2.  Initialize the project with an  `.env`  file.
+
+At this point, you will be prompted to provide the contents of the  `.env`  file. Copy and paste your  `.env`  settings into the terminal, then press  **Enter**  followed by  **Ctrl+D**  (or  **Command+D**  on Mac) to save it.
+
+A typical production  `.env`  file usually begins with:
+ ```bash
+ APP_NAME=your-app-name
+APP_ENV=production
+APP_KEY=
+APP_DEBUG=false
+APP_TIMEZONE=UTC
+APP_URL=https://your-app-url.com 
+```
+**Note:**  Leave the  `APP_KEY`  value empty so the script can generate the application key automatically.
+
+
+
 Watch as your Laravel project is deployed to your server seamlessly!
 
 You can use this script in the future whenever you need to deploy updates to your project. Simply run `./deploy.sh` again, and it will handle the deployment process for you.
+
+### 7. [OPTIONAL] Set Correct File Permissions
+If the project was already cloned inside the web directory, ensure that all files are owned by the correct user and group. You can do this by running:
+```bash
+sudo chown -R web55:client45 "/var/www/clients/client45/web55/web"
+```
+This step ensures that your project has the proper permissions for smooth operation.
 
 # Disclaimer
 This script is provided "as is," without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. Use it at your own risk. The author is not responsible for any damage, data loss, or other issues caused by the use or misuse of this script. Always test it in a safe environment before deploying to a live server.
