@@ -1,4 +1,5 @@
 
+
 # Laravel Deployment Script for ISPConfig Managed VPS
 Deploying a Laravel project to a live server often requires a series of repetitive steps to ensure the project works as expected. This script simplifies the deployment process and can either serve as a complete solution for most Laravel projects or act as a foundation for customization based on a project's specific needs.
 
@@ -50,6 +51,14 @@ GITHUB_TOKEN="github_pat_your_github_token"
 REPO_OWNER="YourUserName"
 REPO_NAME="your-laravel-repo-name"
 ```
+**Generating a GitHub Fine-Grained Token:**
+
+When creating a fine-grained personal access token for the project, ensure it has only the minimum required permissions:
+
+-   **Content**: Read-only
+-   **Metadata**: Read-only
+
+This minimizes security risks by granting the token only the access it needs to deploy your project.
 ### 5. Set Execute Permissions
 Grant execute permissions to the script:
 ```bash
