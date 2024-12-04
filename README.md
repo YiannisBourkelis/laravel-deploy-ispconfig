@@ -5,7 +5,7 @@ Deploying a Laravel project to a live server often requires a series of repetiti
 # Prerequisites
 Before proceeding, ensure the following:
 1. You have already set up the user and domain for your project using the ISPConfig web panel.
-2. You have cloned your Laravel project into the appropriate web folder.
+2. [OPTIONAL] You have cloned your Laravel project into the appropriate web folder.
 
 # Installation Steps
 ### 1. Navigate to Your Project Folder
