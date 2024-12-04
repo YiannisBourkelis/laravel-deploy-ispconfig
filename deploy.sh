@@ -43,14 +43,66 @@ fi
 
 echo "Running script as user '$USER'..."
 
-# Change to the project directory
+# Check if APP_DIR exists
+if [ ! -d "$APP_DIR" ]; then
+  echo "The application directory '$APP_DIR' does not exist."
+  read -p "Do you want to clone the repository to the parent directory of '$APP_DIR'? [y/N]: " CLONE_RESPONSE
+  CLONE_RESPONSE=${CLONE_RESPONSE,,} # Convert to lowercase
+
+  if [[ "$CLONE_RESPONSE" == "y" || "$CLONE_RESPONSE" == "yes" ]]; then
+    PARENT_DIR=$(dirname "$APP_DIR")
+    echo "Cloning repository into '$PARENT_DIR'..."
+
+    git clone https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/$REPO_OWNER/$REPO_NAME.git "$PARENT_DIR/$(basename $APP_DIR)"
+    if [ $? -ne 0 ]; then
+      echo "Error: Failed to clone the repository. Exiting."
+      exit 1
+    fi
+    echo "Repository successfully cloned."
+
+    # Prompt user for .env file content
+    echo "Please provide the contents for the .env file."
+    echo "When done, press Ctrl+D to save and continue."
+    ENV_FILE="$APP_DIR/.env"
+    if [ -f "$ENV_FILE" ]; then
+      echo "A .env file already exists in $APP_DIR. Skipping creation."
+    else
+      echo "Enter .env file content below:"
+      cat > "$ENV_FILE"
+      if [ $? -ne 0 ]; then
+        echo "Error: Failed to create .env file. Exiting."
+        exit 1
+      fi
+      echo ".env file created successfully at $ENV_FILE."
+    fi
+
+    cd "$APP_DIR" || { echo "Error: Failed to change directory to $APP_DIR"; exit 1; }
+
+    # Install or update composer dependencies
+    echo "Installing/updating composer dependencies"
+    /usr/bin/php$PHP_VERSION /usr/local/bin/composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+
+    # Generate application key
+    echo "Generating application key..."
+    /usr/bin/php$PHP_VERSION artisan key:generate
+    if [ $? -ne 0 ]; then
+      echo "Error: Failed to generate application key. Exiting."
+      exit 1
+    fi
+    echo "Application key generated successfully."
+  else
+    echo "Exiting. Directory '$APP_DIR' is required for deployment."
+    exit 1
+  fi
+fi
+
+# Proceed with deployment
 echo "Changing to the project directory: $APP_DIR"
 cd $APP_DIR || { echo "Error: Failed to change directory to $APP_DIR"; exit 1; }
 
 # Enable maintenance mode
 echo "Turning on maintenance mode"
 /usr/bin/php$PHP_VERSION artisan down --retry=30 || true
-#/usr/bin/php$PHP_VERSION artisan down --render="maintenance" --retry=30 || true
 
 # Pull the latest changes from the repository
 echo "Pulling the latest changes from the git repository ($BRANCH)..."
